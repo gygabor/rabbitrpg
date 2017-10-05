@@ -7,8 +7,8 @@ class View(object):
     canvas.pack()
 
     def __init__(self):
-        self.floor = PhotoImage(file="./img/floor.png")
-        self.wall = PhotoImage(file="./img/wall.png")
+        self.floor = ImageTk.PhotoImage(Image.open("./img/floor.png"))
+        self.wall = ImageTk.PhotoImage(Image.open("./img/wall.png"))
         self.hero_graphic = None
         self.hero_img = None
 
@@ -20,20 +20,23 @@ class View(object):
                 else:
                     self.canvas.create_image(column * 72, row * 72, anchor=NW, image=self.wall)
 
-    def config_hero_image(self, hero, direction):
-        self.hero_img = PhotoImage(file=hero.image[direction])
+    def config_hero_image(self, hero):
+        self.hero_img = ImageTk.PhotoImage(Image.open(hero.image["down"]))
 
-    def draw_characters(self, hero, direction):
-        self.config_hero_image(hero, direction)
+    def draw_characters(self, hero):
         self.hero_graphic = self.canvas.create_image(hero.pos_x, hero.pos_y, anchor=NW, image=self.hero_img)
 
-    def update_entity(self):
-        self.canvas.itemconfigure(self.hero_graphic, image=img)
+    def get_canvas_items(self):
+        return self.hero_graphic
 
-    def move_entity(self, entity, direction=""):
-        if direction != "":
-            self.config_hero_image(entity, direction)
-            self.update_entity(entity.image[direction])
+    def update_entity(self, hero, direction):
+        self.hero_img = ImageTk.PhotoImage(Image.open(hero.image[direction]))
+        self.canvas.itemconfigure(self.hero_graphic, image=self.hero_img)
+
+    def move_entity(self, entity, x, y):
+        if entity.move == True:
+            self.canvas.move(entity.canvas_item, x, y)
+
 
     def show(self):
         self.root.mainloop()
