@@ -1,3 +1,5 @@
+from random import *
+
 class Entity(object):
     def __init__(self, pos_x, pos_y, game_map):
         self.pos_x = pos_x
@@ -30,6 +32,25 @@ class Entity(object):
         elif self.game_map.game_map[pos_y][pos_x] == '0':
             return True
 
+    def get_free_position(self, boss=None, skeletons=None):
+        start_positions = []
+        find_pos = False
+        while find_pos == False:
+            pos_x = randint(0, 9)
+            pos_y = randint(0, 9)
+            if self.game_map.game_map[pos_y][pos_x] == '0' and (pos_x, pos_y) != (self.pos_x, self.pos_y):
+                find_pos = True
+            if boss:
+                if (pos_x, pos_y) == (boss.pos_x, boss.pos_y):
+                    find_pos = False
+            if skeletons:
+                for skeleton in skeletons:
+                    if (pos_x, pos_y) == (skeleton.pos_x, skeleton.pos_y):
+                        find_pos = False
+        start_positions.append(pos_x)
+        start_positions.append(pos_y)
+        return start_positions
+
 class Hero(Entity):
     def __init__(self, pos_x, pos_y, game_map):
         super().__init__(pos_x, pos_y, game_map)
@@ -40,7 +61,11 @@ class Hero(Entity):
                       }
 
 class Boss(Entity):
-    pass
+    def __init__(self, pos_x, pos_y, game_map):
+        super().__init__(pos_x, pos_y, game_map)
+        self.image = "./img/boss.png"
 
 class Skeleton(Entity):
-    pass
+    def __init__(self, pos_x, pos_y, game_map):
+        super().__init__(pos_x, pos_y, game_map)
+        self.image = "./img/skel.png"
